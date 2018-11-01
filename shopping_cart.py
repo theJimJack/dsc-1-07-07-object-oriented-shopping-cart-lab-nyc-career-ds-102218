@@ -1,7 +1,7 @@
 class ShoppingCart:
-    def __init__(self, employee_discount=None, total = 0, items = []):
+    def __init__(self, employee_discount=None, total = 0, items = None):
         self._total = total
-        self._items = items
+        self._items = items or []
         self._employee_discount = employee_discount
 
     @property
@@ -16,9 +16,15 @@ class ShoppingCart:
         return self._items
     # @items.setter
     def add_item(self,name,price,quantity=1):
-        ND = {'name':name,'price':price,'quantity':quantity}
-        self._items.append(ND)
-        self._total += price*quantity
+        if quantity==1:
+            ND = {'name':name,'price':price,'quantity':quantity}
+            self.items.append(ND)
+            self._total += price*quantity
+        else:
+            for q in list(range(0, quantity)):
+                q = {'name':name,'price':price,'quantity':1}
+                self.items.append(q)
+                self._total += price
         return self._total
 
     @property
@@ -29,13 +35,13 @@ class ShoppingCart:
     #     return self._employee_discount = updated_amount
 
     def mean_item_price(self):
-        item_prices = list(map(lambda item:item['price'],self._items))
+        item_prices = list(map(lambda item:item['price'],self.items))
         sum_of_items = sum(item_prices)
         num_of_items = len(item_prices)
         return sum_of_items/num_of_items
 
     def median_item_price(self):
-        item_prices = list(map(lambda item:item['price'],self._items))
+        item_prices = list(map(lambda item:item['price'],self.items))
         num_of_items = len(item_prices)
         if len(item_prices)%2==0:
             return (item_prices[(num_of_items/2)]+item_prices[(num_of_items/2)+1])/2
@@ -46,15 +52,13 @@ class ShoppingCart:
         if self.employee_discount==None:
             return "Sorry, there is no discount to apply to your cart :("
         else:
-            item_prices_full = list(map(lambda item:item['price'],self._items))
+            item_prices_full = list(map(lambda item:item['price'],self.items))
             sum_of_items_full = sum(item_prices_full)
-            # return self.employee_discount
-            return sum_of_items_full
-            # return 1-self.employee_discount/100
-            # return sum_of_items*(1-(int(self.employee_discount)/100))
+            return sum_of_items_full*(1-(int(self.employee_discount)/100))
 
     def item_names(self):
-        return list(map(lambda item:item['name'],self._items))
+        return list(map(lambda item:item['name'],self.items))
 
     def void_last_item(self):
-        self._items.pop()
+        for k, v in self.items[0].items():
+            k.pop()
